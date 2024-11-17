@@ -45,7 +45,7 @@ visual_features = [VisualFeatureTypes.categories, VisualFeatureTypes.tags, Visua
 
 tags_result_remote = computervision_client.analyze_image(remote_image_url, visual_features=visual_features)
 
-# Print results with confidence score
+# Print results of categories with confidence score
 print("Categories and tags in the remote image:")
 if not tags_result_remote.categories:
     print("No categories detected.")
@@ -53,18 +53,21 @@ else:
     for category in tags_result_remote.categories:
         print(f"Category '{category.name}' with confidence {category.score * 100:.2f}%")
 
+# Print results of tags with confidence score
 if not tags_result_remote.tags:
     print("No tags detected.")
 else:
     for tag in tags_result_remote.tags:
         print(f"Tag '{tag.name}' with confidence {tag.confidence * 100:.2f}%")
 
+# Print results of description with confidence score
 if not tags_result_remote.description.captions:
     print("No description detected.")
 else:
     for caption in tags_result_remote.description.captions:
         print(f"Description: '{caption.text}' with confidence {caption.confidence * 100:.2f}%")
 
+# Print results of objects with confidence score
 if not tags_result_remote.objects:
     print("No objects detected.")
 else:
