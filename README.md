@@ -9,8 +9,8 @@ The goal of this project is to be able to submit a simple image and have AI gene
 <strong> Run the following commands: </strong>
 - pip install pillow
 - pip install azure-cognitiveservices-vision-computervision
-- setx VISION_KEY 97g3WiPAnTBK2ubCnYbZwOPkNE22AsR5xXmsglXFU7HfTkzbwFepJQQJ99AKAC4f1cMXJ3w3AAAFACOGgqh3
-- setx VISION_ENDPOINT https://crochet-vision.cognitiveservices.azure.com/    
+- setx VISION_KEY <your_vision_key_here>
+- setx VISION_ENDPOINT <your_vision_endpoint_here>
 
 
 ## Running the Code
