@@ -1,7 +1,10 @@
 from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
 from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
 from msrest.authentication import CognitiveServicesCredentials
+from azure.ai.vision.imageanalysis.models import VisualFeatures
+from azure.core.credentials import AzureKeyCredential
 
 
 from array import array
@@ -17,66 +20,89 @@ Authenticates your credentials and creates a client.
 subscription_key = os.environ["VISION_KEY"]
 endpoint = os.environ["VISION_ENDPOINT"]
 
-computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
-'''
-END - Authenticate
-'''
+client = ImageAnalysisClient(
+    endpoint=endpoint,
+    credential=AzureKeyCredential(subscription_key)
+)
 
-'''
-Quickstart variables
-These variables are shared by several examples
-'''
-# Images used for the examples: Describe an image, Categorize an image, Tag an image, 
-# Detect faces, Detect adult or racy content, Detect the color scheme, 
-# Detect domain-specific content, Detect image types, Detect objects
-images_folder = os.path.join (os.path.dirname(os.path.abspath(__file__)), "images")
-remote_image_url = "https://images-ext-1.discordapp.net/external/Af8sIRhgdw28iYnuODvtb1gY8_xWJNV8ryKikDvZVMg/https/assets.voxcity.com/uploads/blog_images/Iconic%2520Landmarks%2520in%2520Rome_original.jpg?width=832&height=468"
-'''
-END - Quickstart variables
-'''
+# Get a caption for the image. This will be a synchronously (blocking) call.
+result = client.analyze_from_url(
+    image_url="https://images-ext-1.discordapp.net/external/N1PJfiAdil7yMxEwqEVE6RtDlDmIcZBStdXPDjHzkn8/https/m.media-amazon.com/images/I/51G9HvPQ-bL.jpg?width=468&height=468",
+    visual_features=[VisualFeatures.TAGS, VisualFeatures.OBJECTS],
+    gender_neutral_caption=True,  # Optional (default is False)
+)
+
+if result.tags is not None:
+    print(" Tags:")
+    for tag in result.tags.list:
+        print(f"   '{tag.name}', Confidence {tag.confidence:.4f}")
+
+if result.objects is not None:
+    print(" Objects:")
+    for object in result.objects.list:
+        print(f"   '{object.tags[0].name}', {object.bounding_box}, Confidence: {object.tags[0].confidence:.4f}")
 
 
-'''
-Tag an Image - remote
-This example returns a tag (key word) for each thing in the image.
-'''
-# Call API with remote image and request specific visual features
-visual_features = [VisualFeatureTypes.categories, VisualFeatureTypes.tags, VisualFeatureTypes.description, VisualFeatureTypes.objects]
+# computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+# '''
+# END - Authenticate
+# '''
 
-tags_result_remote = computervision_client.analyze_image(remote_image_url, visual_features=visual_features)
+# '''
+# Quickstart variables
+# These variables are shared by several examples
+# '''
+# # Images used for the examples: Describe an image, Categorize an image, Tag an image, 
+# # Detect faces, Detect adult or racy content, Detect the color scheme, 
+# # Detect domain-specific content, Detect image types, Detect objects
+# images_folder = os.path.join (os.path.dirname(os.path.abspath(__file__)), "images")
+# remote_image_url = "https://images-ext-1.discordapp.net/external/Af8sIRhgdw28iYnuODvtb1gY8_xWJNV8ryKikDvZVMg/https/assets.voxcity.com/uploads/blog_images/Iconic%2520Landmarks%2520in%2520Rome_original.jpg?width=832&height=468"
+# '''
+# END - Quickstart variables
+# '''
 
-# Print results of categories with confidence score
-print("Categories and tags in the remote image:")
-if not tags_result_remote.categories:
-    print("No categories detected.")
-else:
-    for category in tags_result_remote.categories:
-        print(f"Category '{category.name}' with confidence {category.score * 100:.2f}%")
 
-# Print results of tags with confidence score
-if not tags_result_remote.tags:
-    print("No tags detected.")
-else:
-    for tag in tags_result_remote.tags:
-        print(f"Tag '{tag.name}' with confidence {tag.confidence * 100:.2f}%")
+# '''
+# Tag an Image - remote
+# This example returns a tag (key word) for each thing in the image.
+# '''
+# # Call API with remote image and request specific visual features
+# visual_features = [VisualFeatureTypes.categories, VisualFeatureTypes.tags, VisualFeatureTypes.description, VisualFeatureTypes.objects]
 
-# Print results of description with confidence score
-if not tags_result_remote.description.captions:
-    print("No description detected.")
-else:
-    for caption in tags_result_remote.description.captions:
-        print(f"Description: '{caption.text}' with confidence {caption.confidence * 100:.2f}%")
+# tags_result_remote = computervision_client.analyze_image(remote_image_url, visual_features=visual_features)
 
-# Print results of objects with confidence score
-if not tags_result_remote.objects:
-    print("No objects detected.")
-else:
-    print("Objects in the remote image:")
-    for object in tags_result_remote.objects:
-        print(f"Object '{object.object_property}' with confidence {object.confidence * 100:.2f}%")
+# # Print results of categories with confidence score
+# print("Categories and tags in the remote image:")
+# if not tags_result_remote.categories:
+#     print("No categories detected.")
+# else:
+#     for category in tags_result_remote.categories:
+#         print(f"Category '{category.name}' with confidence {category.score * 100:.2f}%")
 
-print()
-'''
-END - Tag an Image - remote
-'''
-print("End of Computer Vision quickstart.")
+# # Print results of tags with confidence score
+# if not tags_result_remote.tags:
+#     print("No tags detected.")
+# else:
+#     for tag in tags_result_remote.tags:
+#         print(f"Tag '{tag.name}' with confidence {tag.confidence * 100:.2f}%")
+
+# # Print results of description with confidence score
+# if not tags_result_remote.description.captions:
+#     print("No description detected.")
+# else:
+#     for caption in tags_result_remote.description.captions:
+#         print(f"Description: '{caption.text}' with confidence {caption.confidence * 100:.2f}%")
+
+# # Print results of objects with confidence score
+# if not tags_result_remote.objects:
+#     print("No objects detected.")
+# else:
+#     print("Objects in the remote image:")
+#     for object in tags_result_remote.objects:
+#         print(f"Object '{object.object_property}' with confidence {object.confidence * 100:.2f}%")
+
+# print()
+# '''
+# END - Tag an Image - remote
+# '''
+# print("End of Computer Vision quickstart.")
