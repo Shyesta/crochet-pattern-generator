@@ -43,6 +43,12 @@ if result.objects is not None:
         print(f"   '{object.tags[0].name}', {object.bounding_box}, Confidence: {object.tags[0].confidence:.4f}")
 
 
+'''
+Computer Vision Section - Commented out since we are now using 
+Azure.AI.Vision.ImageAnalysis instead of Azure.CognitiveServices.Vision.ComputerVision
+Keeping for reference
+'''
+
 # computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
 # '''
 # END - Authenticate
