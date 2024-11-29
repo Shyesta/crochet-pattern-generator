@@ -9,9 +9,11 @@ The goal of this project is to be able to submit a simple image and have AI gene
 <strong> Run the following commands: </strong>
 - pip install pillow
 - pip install azure-cognitiveservices-vision-computervision
+- pip install azure.ai.vision.imageanalysis
 - setx VISION_KEY <your_vision_key_here>
 - setx VISION_ENDPOINT <your_vision_endpoint_here>
 
+<strong> Restart your IDE </strong>
 
 ## Running the Code
 - Input a link to an image in the remote_image_url variable 
