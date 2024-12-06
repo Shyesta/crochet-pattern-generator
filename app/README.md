@@ -8,6 +8,8 @@ The goal of this project is to be able to submit a simple image and have AI gene
 ## Setup
 <strong> Run the following commands: </strong>
 - pip install pillow
+- pip install flask
+- pip install groq
 - pip install azure-cognitiveservices-vision-computervision
 - pip install azure.ai.vision.imageanalysis
 - setx VISION_KEY <your_vision_key_here>
