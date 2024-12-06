@@ -14,13 +14,15 @@ The goal of this project is to be able to submit a simple image and have AI gene
 - pip install azure.ai.vision.imageanalysis
 - setx VISION_KEY <your_vision_key_here>
 - setx VISION_ENDPOINT <your_vision_endpoint_here>
+- setx GROQ_API_KEY <your_groq_api_key_here>
+- OPTIONAL, HIGHLY RECOMMENDED: Install VS Code extension "Live Preview" from Microsoft to preview the website and upload image URL's
 
 <strong> Restart your IDE </strong>
 
 ## Running the Code
-- Input a link to an image in the remote_image_url variable 
-- Run the code
-- Expected output in the terminal is a list of tags with a confidence level attached to each one
+- Open the HTML page in your browser
+- Upload an image URL into the input box provided
+- Expected output on the webpage is the instructions on how to recreate the crochet pattern based off the ImageAnalysisClient tag results.
 
 ## Analysis of Capabilities and Limitations
 ## Potential Future Improvements
