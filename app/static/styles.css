@@ -2,6 +2,17 @@
     background-color: rgb(233, 233, 197);
 }
 
+.generate-btn{
+    background-color: #796956 ;
+    border: 1px solid #4b4136;
+
+}
+
+.generate-btn:hover, .generate-btn:active, .generate-btn:focus{
+    background-color: rgb(139, 126, 108) !important;
+    border: 1px solid #5e5246 !important;
+}
+
 /* IMAGES */
 .bee-img{
     width: 30%;
