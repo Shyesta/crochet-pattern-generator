@@ -26,33 +26,41 @@ client = ImageAnalysisClient(
 )
 
 # Get a caption for the image. This will be a synchronously (blocking) call.
-result = client._analyze_from_image_data(
+result = client.analyze_from_url(
     image_url="https://images-ext-1.discordapp.net/external/N1PJfiAdil7yMxEwqEVE6RtDlDmIcZBStdXPDjHzkn8/https/m.media-amazon.com/images/I/51G9HvPQ-bL.jpg?width=468&height=468",
     visual_features=[VisualFeatures.TAGS, VisualFeatures.OBJECTS],
     gender_neutral_caption=True,  # Optional (default is False)
 )
 
-#TODO: Convert the tags to an array that can be easily passed to the Groq API
+# Prepare the tags array
+tags_array = []
 if result.tags is not None:
-    print(" Tags:")
     for tag in result.tags.list:
-        print(f"   '{tag.name}', Confidence {tag.confidence:.4f}")
+        tags_array.append({"name": tag.name, "confidence": tag.confidence})
 
+# Prepare the objects array if needed (optional, for more details)
+objects_array = []
 if result.objects is not None:
-    print(" Objects:")
-    for object in result.objects.list:
-        print(f"   '{object.tags[0].name}', {object.bounding_box}, Confidence: {object.tags[0].confidence:.4f}")
+    for obj in result.objects.list:
+        objects_array.append({
+            "tag": obj.tags[0].name,
+            "bounding_box": obj.bounding_box,
+            "confidence": obj.tags[0].confidence
+        })
 
+# Initialize the Groq client
+client = Groq(api_key=os.environ['GROQ_API_KEY'])
 
-client = Groq(
-    api_key=os.environ['GROQ_API_KEY'],
-)
-
+# Send the tags to the Groq API
 chat_completion = client.chat.completions.create(
     messages=[
         {
             "role": "system",
-            "content": "You are a helpful assistant whose goal is to assist the user in recreating a crochet pattern based off tags from an image. The tags are the following: {tags}"
+            "content": f"""You are a helpful assistant whose goal is to assist the user in recreating a crochet pattern based on image tags. 
+            You can not ask any questions for clarification. There will not be any further messages provided about the image provided. 
+            If certain information is missing that is required, you must decide that information on your own. 
+            Come up with a set of materials and instructions based on the image tags. Include a legend for any abbreviations
+            that beginner crocheters might not know. The tags are: {tags_array}"""
         }
     ],
     model="llama3-8b-8192"
@@ -60,7 +68,7 @@ chat_completion = client.chat.completions.create(
 
 response = chat_completion.choices[0].message.content
 
-
+# Output the API response
 print(response)
 
 
