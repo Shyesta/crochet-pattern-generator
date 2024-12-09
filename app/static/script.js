@@ -1,6 +1,6 @@
+document.getElementById("generate-btn").addEventListener("click", async (event) => {
+    event.preventDefault();  // Prevent the form from submitting and reloading the page
 
-
-document.getElementById("generate-btn").addEventListener("click", async () => {
     const imageUrl = document.getElementById("image-url").value;
     const output = document.getElementById("response-output");
 
@@ -20,9 +20,10 @@ document.getElementById("generate-btn").addEventListener("click", async () => {
         });
 
         // Handle the response
-        const data = await response.json();
+        const data = await response.text();
         if (response.ok) {
-            output.textContent = data.pattern; // Display the pattern
+            output.style.display = "block";
+            output.textContent = data; // Display the pattern
         } else {
             output.textContent = `Error: ${data.error}`;
         }

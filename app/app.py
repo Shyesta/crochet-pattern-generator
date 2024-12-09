@@ -1,30 +1,32 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 from app.services.main import analyze_image_and_generate_pattern
 
 # initalize the Flask app
 app = Flask(__name__)
+CORS(app)
 
 # define the index route 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-#
-@app.route('/', methods=['POST'])
+@app.route("/", methods=["POST"])
 def process_image():
     data = request.get_json()
     image_url = data.get("image_url")
+
     if not image_url:
         return jsonify({"error": "Image URL is required"}), 400
 
-    # Call the service function
+    # Call the image analysis function
     result = analyze_image_and_generate_pattern(image_url)
 
-    if "error" in result:
-        return jsonify({"error": result["error"]}), 500
+    if result is None:
+        return jsonify({"error": "Failed to analyze the image"}), 500
 
-    return jsonify({"tags": result["tags"], "pattern": result["pattern"]})
+    # Return the pattern data
+    return result
 
-# run the app
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

@@ -20,15 +20,15 @@ Authenticates your credentials and creates a client.
 subscription_key = os.environ["VISION_KEY"]
 endpoint = os.environ["VISION_ENDPOINT"]
 
-client = ImageAnalysisClient(
+image_client = ImageAnalysisClient(
     endpoint=endpoint,
     credential=AzureKeyCredential(subscription_key)
 )
 
 def analyze_image_and_generate_pattern(image_url):
     # Get a caption for the image. This will be a synchronously (blocking) call.
-    result = client.analyze_from_url(
-        image_url="https://images-ext-1.discordapp.net/external/N1PJfiAdil7yMxEwqEVE6RtDlDmIcZBStdXPDjHzkn8/https/m.media-amazon.com/images/I/51G9HvPQ-bL.jpg?width=468&height=468",
+    result = image_client.analyze_from_url(
+        image_url=image_url,
         visual_features=[VisualFeatures.TAGS, VisualFeatures.OBJECTS],
         gender_neutral_caption=True,  # Optional (default is False)
     )
@@ -50,10 +50,10 @@ def analyze_image_and_generate_pattern(image_url):
             })
 
     # Initialize the Groq client
-    client = Groq(api_key=os.environ['GROQ_API_KEY'])
+    groq_client = Groq(api_key=os.environ['GROQ_API_KEY'])
 
     # Send the tags to the Groq API
-    chat_completion = client.chat.completions.create(
+    chat_completion = groq_client.chat.completions.create(
         messages=[
             {
                 "role": "system",
@@ -70,9 +70,10 @@ def analyze_image_and_generate_pattern(image_url):
     response = chat_completion.choices[0].message.content
 
     # Output the API response
-    print(response)
+    return response
+    #print(response)
 
-
+# print(analyze_image_and_generate_pattern("https://images-ext-1.discordapp.net/external/N1PJfiAdil7yMxEwqEVE6RtDlDmIcZBStdXPDjHzkn8/https/m.media-amazon.com/images/I/51G9HvPQ-bL.jpg?width=468&height=468"))
 '''
 Computer Vision Section - Commented out since we are now using 
 Azure.AI.Vision.ImageAnalysis instead of Azure.CognitiveServices.Vision.ComputerVision
