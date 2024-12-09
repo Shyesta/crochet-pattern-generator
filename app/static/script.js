@@ -11,7 +11,7 @@ document.getElementById("generate-btn").addEventListener("click", async () => {
 
     try {
         // Send URL to the backend
-        const response = await fetch("/process-image", {
+        const response = await fetch("/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
