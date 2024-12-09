@@ -25,51 +25,52 @@ client = ImageAnalysisClient(
     credential=AzureKeyCredential(subscription_key)
 )
 
-# Get a caption for the image. This will be a synchronously (blocking) call.
-result = client.analyze_from_url(
-    image_url="https://images-ext-1.discordapp.net/external/N1PJfiAdil7yMxEwqEVE6RtDlDmIcZBStdXPDjHzkn8/https/m.media-amazon.com/images/I/51G9HvPQ-bL.jpg?width=468&height=468",
-    visual_features=[VisualFeatures.TAGS, VisualFeatures.OBJECTS],
-    gender_neutral_caption=True,  # Optional (default is False)
-)
+def analyze_image_and_generate_pattern(image_url):
+    # Get a caption for the image. This will be a synchronously (blocking) call.
+    result = client.analyze_from_url(
+        image_url="https://images-ext-1.discordapp.net/external/N1PJfiAdil7yMxEwqEVE6RtDlDmIcZBStdXPDjHzkn8/https/m.media-amazon.com/images/I/51G9HvPQ-bL.jpg?width=468&height=468",
+        visual_features=[VisualFeatures.TAGS, VisualFeatures.OBJECTS],
+        gender_neutral_caption=True,  # Optional (default is False)
+    )
 
-# Prepare the tags array
-tags_array = []
-if result.tags is not None:
-    for tag in result.tags.list:
-        tags_array.append({"name": tag.name, "confidence": tag.confidence})
+    # Prepare the tags array
+    tags_array = []
+    if result.tags is not None:
+        for tag in result.tags.list:
+            tags_array.append({"name": tag.name, "confidence": tag.confidence})
 
-# Prepare the objects array if needed (optional, for more details)
-objects_array = []
-if result.objects is not None:
-    for obj in result.objects.list:
-        objects_array.append({
-            "tag": obj.tags[0].name,
-            "bounding_box": obj.bounding_box,
-            "confidence": obj.tags[0].confidence
-        })
+    # Prepare the objects array if needed (optional, for more details)
+    objects_array = []
+    if result.objects is not None:
+        for obj in result.objects.list:
+            objects_array.append({
+                "tag": obj.tags[0].name,
+                "bounding_box": obj.bounding_box,
+                "confidence": obj.tags[0].confidence
+            })
 
-# Initialize the Groq client
-client = Groq(api_key=os.environ['GROQ_API_KEY'])
+    # Initialize the Groq client
+    client = Groq(api_key=os.environ['GROQ_API_KEY'])
 
-# Send the tags to the Groq API
-chat_completion = client.chat.completions.create(
-    messages=[
-        {
-            "role": "system",
-            "content": f"""You are a helpful assistant whose goal is to assist the user in recreating a crochet pattern based on image tags. 
-            You can not ask any questions for clarification. There will not be any further messages provided about the image provided. 
-            If certain information is missing that is required, you must decide that information on your own. 
-            Come up with a set of materials and instructions based on the image tags. Include a legend for any abbreviations
-            that beginner crocheters might not know. The tags are: {tags_array}"""
-        }
-    ],
-    model="llama3-8b-8192"
-)
+    # Send the tags to the Groq API
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "system",
+                "content": f"""You are a helpful assistant whose goal is to assist the user in recreating a crochet pattern based on image tags. 
+                You can not ask any questions for clarification. There will not be any further messages provided about the image provided. 
+                If certain information is missing that is required, you must decide that information on your own. 
+                Come up with a set of materials and instructions based on the image tags. Include a legend for any abbreviations
+                that beginner crocheters might not know. The tags are: {tags_array}"""
+            }
+        ],
+        model="llama3-8b-8192"
+    )
 
-response = chat_completion.choices[0].message.content
+    response = chat_completion.choices[0].message.content
 
-# Output the API response
-print(response)
+    # Output the API response
+    print(response)
 
 
 '''
