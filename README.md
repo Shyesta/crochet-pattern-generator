@@ -15,14 +15,27 @@ The goal of this project is to be able to submit a simple image and have AI gene
 - setx VISION_KEY <your_vision_key_here>
 - setx VISION_ENDPOINT <your_vision_endpoint_here>
 - setx GROQ_API_KEY <your_groq_api_key_here>
-- Optional (Highly Recommended): Install VS Code extension "Live Preview" from Microsoft to preview the website and upload image URLs
 
 <strong> Restart your IDE </strong>
 
 ## Running the Code
-- Open the HTML page in your browser
-- Input an image URL into the textbox provided
+- In the terminal, run the command python -m app.app
+- Open the URL listed from flask in the terminal (this will open an HTML page in your browser)
+- Input an image URL into the textbox provided on the HTML page
 - Expected Output: instructions on how to recreate the crochet pattern based off the ImageAnalysisClient tag results.
 
 ## Analysis of Capabilities and Limitations
+# Capabilities:
+- Connects directly to two separate API's in Groq and Azure Cognitive Services
+- Can take in an image URL and return basic instructions on how to recreate the object in crochet
+
+# Limitations:
+- There is no error handling in regards to improper images if the image can not be recreated in Crochet.
+- Users cannot input special instructions based off of what they want, i.e. certain materials, colors, or other things used.
+- We are working off of Azure's default model, which is very limited in how it analyzes the images provided. This results in sometimes generic tags/features being handed to the LLM that generates instructions.
+
 ## Potential Future Improvements
+- Create and train our own model that can properly return more important image tags or visual features that are relevant to crochet pattern making
+- Allow users a space to interact with Groq if they have special instructions, or need to refine the instructions that are returned to them.
+- Include additional error handling for bad images provided.
+- Include a way to upload files directly instead of providing an image URL, which will give users more flexibility in how they interact with the AI app.
